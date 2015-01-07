@@ -2,7 +2,8 @@ define(function (require, exports, module) {
     "use strict";
 
     var CommandManager = brackets.getModule("command/CommandManager"),
-        Menus          = brackets.getModule("command/Menus");
+        Menus          = brackets.getModule("command/Menus"),
+        WorkspaceManager = brackets.getModule("view/WorkspaceManager");
 
     var parse = require("slowparse/slowparse");    
 
@@ -18,7 +19,7 @@ define(function (require, exports, module) {
 
     // First, register a command - a UI-less object associating an id to a handler
     var MY_COMMAND_ID = "slowparse"; // package-style naming to avoid collisions
-    CommandManager.register("Slowparse", MY_COMMAND_ID, parser);
+    CommandManager.register("Show Slowparse Panel", MY_COMMAND_ID, parser);
 
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
