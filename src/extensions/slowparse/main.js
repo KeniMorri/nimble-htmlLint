@@ -3,6 +3,7 @@ define(function (require, exports, module) {
 
     var CommandManager = brackets.getModule("command/CommandManager"),
         Menus          = brackets.getModule("command/Menus"),
+        AppInit = brackets.getModule('utils/AppInit'),
         EditorManager   = brackets.getModule("editor/EditorManager"),
         WorkspaceManager = brackets.getModule("view/WorkspaceManager");
 
@@ -16,6 +17,7 @@ define(function (require, exports, module) {
         console.log(result.error);
         
         if(result.error){
+            window.alert("Error Occured, refer to console.log");
             var obj = result.error;
             console.log(obj.type);
             console.log(obj.start);
@@ -31,8 +33,20 @@ define(function (require, exports, module) {
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     menu.addMenuItem(MY_COMMAND_ID);
+    
+    
+
+    AppInit.appReady(function()
+                     {
+                        window.alert("Init");
+    });
+    
+    
+    
 
     // We could also add a key binding at the same time:
     //menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-H");
     // (Note: "Ctrl" is automatically mapped to "Cmd" on Mac)
 });
+
+//<a>
