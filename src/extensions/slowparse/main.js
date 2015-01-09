@@ -3,18 +3,26 @@ define(function (require, exports, module) {
 
     var CommandManager = brackets.getModule("command/CommandManager"),
         Menus          = brackets.getModule("command/Menus"),
+        AppInit = brackets.getModule('utils/AppInit'),
+        EditorManager   = brackets.getModule("editor/EditorManager"),
         WorkspaceManager = brackets.getModule("view/WorkspaceManager");
 
     var parse = require("slowparse/slowparse");    
 
     // Function to run when the menu item is clicked
     function parser() {
-        var result = parse.HTML(document, '<a href+></a>');
+        var editor = EditorManager.getFocusedEditor();
+        var text   = editor.document.getText();
+        var result = parse.HTML(document, text);
         console.log(result.error);
-        var obj = result.error;
-        console.log(obj.type);
-        console.log(obj.start);
-        console.log(obj.end);
+        
+        if(result.error){
+            window.alert("Error Occured, refer to console.log");
+            var obj = result.error;
+            console.log(obj.type);
+            console.log(obj.start);
+            console.log(obj.end);
+        }
     }
 
     // First, register a command - a UI-less object associating an id to a handler
@@ -25,8 +33,20 @@ define(function (require, exports, module) {
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     menu.addMenuItem(MY_COMMAND_ID);
+    
+    
+
+    AppInit.appReady(function()
+                     {
+                        window.alert("Init");
+    });
+    
+    
+    
 
     // We could also add a key binding at the same time:
     //menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-H");
     // (Note: "Ctrl" is automatically mapped to "Cmd" on Mac)
 });
+
+//<a>
