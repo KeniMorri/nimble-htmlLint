@@ -7,46 +7,33 @@ define(function (require, exports, module) {
         EditorManager   = brackets.getModule("editor/EditorManager"),
         WorkspaceManager = brackets.getModule("view/WorkspaceManager");
 
-    var parse = require("slowparse/slowparse");    
+    var parser = require("parser");   
 
-    // Function to run when the menu item is clicked
-    function parser() {
+    function main(){
         var editor = EditorManager.getFocusedEditor();
         var text   = editor.document.getText();
-        var result = parse.HTML(document, text);
-        console.log(result.error);
-        
-        if(result.error){
-            window.alert("Error Occured, refer to console.log");
-            var obj = result.error;
-            console.log(obj.type);
-            console.log(obj.start);
-            console.log(obj.end);
-        }
+        var result = parser(text);
+        window.alert(result);
     }
-
     // First, register a command - a UI-less object associating an id to a handler
     var MY_COMMAND_ID = "slowparse"; // package-style naming to avoid collisions
-    CommandManager.register("Show Slowparse Panel", MY_COMMAND_ID, parser);
+    CommandManager.register("Show Slowparse Panel", MY_COMMAND_ID, main);
 
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     menu.addMenuItem(MY_COMMAND_ID);
-    
-    
 
     AppInit.appReady(function()
                      {
-                        window.alert("Init");
+
+
+                        //window.alert("Init");
+
+
     });
-    
-    
-    
 
     // We could also add a key binding at the same time:
     //menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-H");
     // (Note: "Ctrl" is automatically mapped to "Cmd" on Mac)
 });
-
-//<a>
