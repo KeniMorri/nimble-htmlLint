@@ -2,10 +2,11 @@ define(function(require){
     function parser(input) {
         var parse = require("slowparse/slowparse");
         var result = parse.HTML(document, input);
-        var msg = "";   
+        var msg = [];   
 
         if(result.error){
             var obj = result.error;
+            msg[3] = obj;
 
             var errorJSON = {
                 "ATTRIBUTE_IN_CLOSING_TAG": "<p>The closing <code>&lt;/[[result.error.closeTag.name]]&gt;</code> tag <em data-highlight='[[result.error.closeTag.start]],[[result.error.closeTag.end]]'>here</em> cannot contain any attributes.</p>",
@@ -47,109 +48,167 @@ define(function(require){
             };
             
             if (obj.type === "ATTRIBUTE_IN_CLOSING_TAG"){
-                msg = errorJSON.ATTRIBUTE_IN_CLOSING_TAG;
+                msg[0] = errorJSON.ATTRIBUTE_IN_CLOSING_TAG;
+                msg[1] = obj.closeTag.start;
+                msg[2] = obj.closeTag.end;
             }
             if (obj.type === "CLOSE_TAG_FOR_VOID_ELEMENT"){
-                msg = errorJSON.CLOSE_TAG_FOR_VOID_ELEMENT;
+                msg[0] = errorJSON.CLOSE_TAG_FOR_VOID_ELEMENT;
+                msg[1] = obj.closeTag.start;
+                msg[2] = obj.closeTag.end;
             }
             if (obj.type === "CSS_MIXED_ACTIVECONTENT"){
-                msg = errorJSON.CSS_MIXED_ACTIVECONTENT;
+                msg[0] = errorJSON.CSS_MIXED_ACTIVECONTENT;
+                msg[1] = obj.property.start;
+                msg[2] = obj.property.end;
             }
             if (obj.type === "EVENT_HANDLER_ATTR_NOT_ALLOWED"){
-                msg = errorJSON.EVENT_HANDLER_ATTR_NOT_ALLOWED;
+                msg[0] = errorJSON.EVENT_HANDLER_ATTR_NOT_ALLOWED;
             }
             if (obj.type === "HTML_CODE_IN_CSS_BLOCK"){
-                msg = errorJSON.HTML_CODE_IN_CSS_BLOCK;
+                msg[0] = errorJSON.HTML_CODE_IN_CSS_BLOCK;
+                msg[1] = obj.html.start;
+                msg[2] = obj.html.end;
             }
             if (obj.type === "HTTP_LINK_FROM_HTTPS_PAGE"){
-                msg = errorJSON.HTTP_LINK_FROM_HTTPS_PAGE;
+                msg[0] = errorJSON.HTTP_LINK_FROM_HTTPS_PAGE;
+                msg[1] = obj.openTag.start;
+                msg[2] = obj.openTag.end;
             }
             if (obj.type === "INVALID_ATTR_NAME"){
-                msg = errorJSON.INVALID_ATTR_NAME;
+                msg[0] = errorJSON.INVALID_ATTR_NAME;
+                msg[1] = obj.start;
+                msg[2] = obj.end;
             }
             if (obj.type === "UNSUPPORTED_ATTR_NAMESPACE"){
-                msg = errorJSON.UNSUPPORTED_ATTR_NAMESPACE;
+                msg[0] = errorJSON.UNSUPPORTED_ATTR_NAMESPACE;
+                msg[1] = obj.start;
+                msg[2] = obj.end;
             }
             if (obj.type === "INVALID_CSS_DECLARATION"){
-                msg = errorJSON.INVALID_CSS_DECLARATION;
+                msg[0] = errorJSON.INVALID_CSS_DECLARATION;
             }
             if (obj.type === "INVALID_CSS_PROPERTY_NAME"){
-                msg = errorJSON.INVALID_CSS_PROPERTY_NAME;
+                msg[0] = errorJSON.INVALID_CSS_PROPERTY_NAME;
+                msg[1] = obj.cssProperty.start;
+                msg[2] = obj.cssProperty.end;
             }
             if (obj.type === "INVALID_CSS_RULE"){
-                msg = errorJSON.INVALID_CSS_RULE;
+                msg[0] = errorJSON.INVALID_CSS_RULE;
             }
             if (obj.type === "INVALID_TAG_NAME"){
-                msg = errorJSON.INVALID_TAG_NAME;
+                msg[0] = errorJSON.INVALID_TAG_NAME;
+                msg[1] = obj.openTag.start;
+                msg[2] = obj.openTag.end;
             }
             if (obj.type === "JAVASCRIPT_URL_NOT_ALLOWED"){
-                msg = errorJSON.JAVASCRIPT_URL_NOT_ALLOWED;
+                msg[0] = errorJSON.JAVASCRIPT_URL_NOT_ALLOWED;
             }
             if (obj.type === "MISMATCHED_CLOSE_TAG"){
-                msg = errorJSON.MISMATCHED_CLOSE_TAG;
+                msg[0] = errorJSON.MISMATCHED_CLOSE_TAG;
+                msg[1] = obj.closeTag.start;
+                msg[2] = obj.closeTag.end;
             }
             if (obj.type === "MISSING_CSS_BLOCK_CLOSER"){
-                msg = errorJSON.MISSING_CSS_BLOCK_CLOSER;
+                msg[0]= errorJSON.MISSING_CSS_BLOCK_CLOSER;
+                msg[1] = obj.cssValue.start;
+                msg[2] = obj.cssValue.end;
             }
             if (obj.type === "MISSING_CSS_BLOCK_OPENER"){
-                msg = errorJSON.MISSING_CSS_BLOCK_OPENER;
+                msg[0] = errorJSON.MISSING_CSS_BLOCK_OPENER;
+                msg[1] = obj.cssSelector.start;
+                msg[2] = obj.cssSelector.end;
             }
             if (obj.type === "MISSING_CSS_PROPERTY"){
-                msg = errorJSON.MISSING_CSS_PROPERTY;
+                msg[0] = errorJSON.MISSING_CSS_PROPERTY;
+                msg[1] = obj.cssSelector.start;
+                msg[2] = obj.cssSelector.end;
             }
             if (obj.type === "MISSING_CSS_SELECTOR"){
-                msg = errorJSON.MISSING_CSS_SELECTOR;
+                msg[0] = errorJSON.MISSING_CSS_SELECTOR;
+                msg[1] = obj.cssBlock.start;
+                msg[2] = obj.cssBlock.end;
             }
             if (obj.type === "MISSING_CSS_VALUE"){
-                msg = errorJSON.MISSING_CSS_VALUE;
+                msg[0] = errorJSON.MISSING_CSS_VALUE;
+                msg[1] = obj.cssProperty.start;
+                msg[2] = obj.cssProperty.end;
             }
             if (obj.type === "SCRIPT_ELEMENT_NOT_ALLOWED"){
-                msg = errorJSON.SCRIPT_ELEMENT_NOT_ALLOWED;
+                msg[0] = errorJSON.SCRIPT_ELEMENT_NOT_ALLOWED;
             }
             if (obj.type === "SELF_CLOSING_NON_VOID_ELEMENT"){
-                msg = errorJSON.SELF_CLOSING_NON_VOID_ELEMENT;
+                msg[0] = errorJSON.SELF_CLOSING_NON_VOID_ELEMENT;
+                msg[1] = obj.start;
+                msg[2] = obj.end;
             }
             if (obj.type === "UNCAUGHT_CSS_PARSE_ERROR"){
-                msg = errorJSON.UNCAUGHT_CSS_PARSE_ERROR;
+                msg[0] = errorJSON.UNCAUGHT_CSS_PARSE_ERROR;
+                msg[1] = obj.error.start;
+                msg[2] = obj.error.end;
             }
             if (obj.type === "UNCLOSED_TAG"){
-                msg = errorJSON.UNCLOSED_TAG;
+                msg[0] = errorJSON.UNCLOSED_TAG;
+                msg[1] = obj.openTag.start;
+                msg[2] = obj.openTag.end;
             }
             if (obj.type === "UNEXPECTED_CLOSE_TAG"){
-                msg = errorJSON.UNEXPECTED_CLOSE_TAG;
+                msg[0] = errorJSON.UNEXPECTED_CLOSE_TAG;
+                msg[1] = obj.closeTag.start;
+                msg[2] = obj.closeTag.end;
             }
             if (obj.type === "UNFINISHED_CSS_PROPERTY"){
-                msg = errorJSON.UNFINISHED_CSS_PROPERTY;
+                msg[0] = errorJSON.UNFINISHED_CSS_PROPERTY;
+                msg[1] = obj.cssProperty.start;
+                msg[2] = obj.cssProperty.end;
             }
             if (obj.type === "UNFINISHED_CSS_SELECTOR"){
-                msg = errorJSON.UNFINISHED_CSS_SELECTOR;
+                msg[0] = errorJSON.UNFINISHED_CSS_SELECTOR;
+                msg[1] = obj.cssSelector.start;
+                msg[2] = obj.cssSelector.end;
             }
             if (obj.type === "UNFINISHED_CSS_VALUE"){
-                msg = errorJSON.UNFINISHED_CSS_VALUE;
+                msg[0] = errorJSON.UNFINISHED_CSS_VALUE;
+                msg[1] = obj.cssValue.start;
+                msg[2] = obj.cssValue.end;
             }
             if (obj.type === "UNKOWN_CSS_KEYWORD"){
-                msg = errorJSON.UNKOWN_CSS_KEYWORD;
+                msg[0] = errorJSON.UNKOWN_CSS_KEYWORD;
             }
             if (obj.type === "UNQUOTED_ATTR_VALUE"){
-                msg = errorJSON.UNQUOTED_ATTR_VALUE;
+                msg[0] = errorJSON.UNQUOTED_ATTR_VALUE;
+                msg[1] = obj.start;
+                msg[2] = obj.start;
             }
             if (obj.type === "UNTERMINATED_ATTR_VALUE"){
-                msg = errorJSON.UNTERMINATED_ATTR_VALUE;
+                msg[0] = errorJSON.UNTERMINATED_ATTR_VALUE;
+                msg[1] = obj.openTag.start;
+                msg[2] = obj.openTag.end;
             }
             if (obj.type === "UNTERMINATED_CLOSE_TAG"){
-                msg = errorJSON.UNTERMINATED_CLOSE_TAG;
+                msg[0] = errorJSON.UNTERMINATED_CLOSE_TAG;
+                msg[1] = obj.closeTag.start;
+                msg[2] = obj.closeTag.end;
             }
             if (obj.type === "UNTERMINATED_COMMENT"){
-                msg = errorJSON.UNTERMINATED_COMMENT;
+                msg[0] = errorJSON.UNTERMINATED_COMMENT;
+                msg[1] = obj.start;
+                msg[2] = obj.start;
             }
             if (obj.type === "UNTERMINATED_CSS_COMMENT"){
-                msg = errorJSON.UNTERMINATED_CSS_COMMENT;
+                msg[0] = errorJSON.UNTERMINATED_CSS_COMMENT;
+                msg[1] = obj.start;
+                msg[2] = obj.start;
             }
             if (obj.type === "UNBOUND_ATTRIBUTE_VALUE"){
-                msg = errorJSON.UNBOUND_ATTRIBUTE_VALUE;
+                msg[0] = errorJSON.UNBOUND_ATTRIBUTE_VALUE;
+                msg[1] = obj.interval.start;
+                msg[2] = obj.interval.end;
             }
             if (obj.type === "UNTERMINATED_OPEN_TAG"){
-                msg = errorJSON.UNTERMINATED_OPEN_TAG;
+                msg[0] = errorJSON.UNTERMINATED_OPEN_TAG;
+                msg[1] = obj.openTag.start;
+                msg[2] = obj.openTag.end;
             }
         }
        return msg;
