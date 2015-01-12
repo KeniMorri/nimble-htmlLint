@@ -43,6 +43,7 @@ define(function (require, exports, module) {
 
             MarkErrors.markErrors(0, 0, 0);
             console.log("Error Found");
+            window.alert(result[0]);
 
         }else{
             MarkErrors.clearErrors();
