@@ -1,3 +1,8 @@
+//Index 0 returns human-readable message
+//Index 1 returns start of the error
+//Index 2 returns end of the error
+//Index 3 returns the error object
+
 define(function(require){
     function parser(input) {
         var parse = require("slowparse/slowparse");
