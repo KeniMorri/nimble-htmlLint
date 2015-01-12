@@ -64,8 +64,8 @@ define(function(require){
             }
             if (obj.type === "CSS_MIXED_ACTIVECONTENT"){
                 msg[0] = errorJSON.CSS_MIXED_ACTIVECONTENT;
-                msg[1] = obj.property.start;
-                msg[2] = obj.property.end;
+                msg[1] = obj.cssProperty.start;
+                msg[2] = obj.cssProperty.end;
             }
             if (obj.type === "EVENT_HANDLER_ATTR_NOT_ALLOWED"){
                 msg[0] = errorJSON.EVENT_HANDLER_ATTR_NOT_ALLOWED;
@@ -87,6 +87,11 @@ define(function(require){
             }
             if (obj.type === "UNSUPPORTED_ATTR_NAMESPACE"){
                 msg[0] = errorJSON.UNSUPPORTED_ATTR_NAMESPACE;
+                msg[1] = obj.start;
+                msg[2] = obj.end;
+            }
+            if (obj.type === "MULTIPLE_ATTR_NAMESPACES"){
+                msg[0] = errorJSON.MULTIPLE_ATTR_NAMESPACES;
                 msg[1] = obj.start;
                 msg[2] = obj.end;
             }
@@ -179,6 +184,8 @@ define(function(require){
             }
             if (obj.type === "UNKOWN_CSS_KEYWORD"){
                 msg[0] = errorJSON.UNKOWN_CSS_KEYWORD;
+                msg[1] = obj.cssKeyword.start;
+                msg[2] = obj.cssKeyword.end;
             }
             if (obj.type === "UNQUOTED_ATTR_VALUE"){
                 msg[0] = errorJSON.UNQUOTED_ATTR_VALUE;
