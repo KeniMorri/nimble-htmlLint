@@ -18,7 +18,7 @@ define(function (require, exports, module) {
 
             //TEMP CODE FOR KLEVER
             //Line counter code
-            var endCount = 0;
+           /* var endCount = 0;
             var linebegin = 0;
             var text2, characterCount = 0;
             for(var i = 0; i <= (result[2] - 1); i++)
@@ -30,18 +30,18 @@ define(function (require, exports, module) {
                 }
                 text2 += text[i];
                 characterCount++;
-            }
-            if(text2){
+            }*/
+            //if(text2){
             //window.alert("EndLine Equals: " + endCount +"\n Line Begin was: " + linebegin + "\n result was: " + result[1] + "\n" + text2);
             //console.log("EndLine Equals: " + endCount +"\n Line Begin was: " + linebegin + "\n result was: " + result[1] + "\n");
             //console.log("Charater at Result was: " + text2[result[1]] + " " + text2[result[2]]);
             //console.log("Character at linebegin was: " + text2[linebegin] + " Line Begin: " + linebegin + " Result 2: " + result[2]);
             //console.log(text2[196] + text2[197] + text2[198] + text2[199] + text2[200] + text2[201] + text2[202] + text2[203] + text2[204]);
             //END TEMP CODE
-            }
-            var characterAt = result[2] - linebegin;
+            //}
+           // var characterAt = result[2] - linebegin;
 
-            MarkErrors.markErrors(endCount - 1, result[1] - linebegin, characterAt);
+            MarkErrors.markErrors(0, 0, 0);
             console.log("Error Found");
 
         }else{
@@ -55,6 +55,7 @@ define(function (require, exports, module) {
             output += text[i];
         }
         console.log("The strings between are:\n" + output);
+        console.log("Line Count: ", result[3]);
     }
 
      //Keyboard event handler
