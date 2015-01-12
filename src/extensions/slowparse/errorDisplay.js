@@ -14,19 +14,16 @@ define(function (require, exports, module) {
 
     ExtensionUtils.loadStyleSheet(module, "main.less");
 
-    //var editor = EditorManager.getFocusedEditor();
-
-    //var markOptionsForNormalErrorHighlight  = {className: "cc-JSLint-error-highlight"};
-
-    // Function to run when the menu item is clicked
-    function markErrors(line, start, end) {
+    //Function that underlines the given line
+    function markErrors(lineStart, lineEnd, charStart, charEnd) {
         var editor = EditorManager.getFocusedEditor();
 
-        var marked = editor._codeMirror.markText({line: line, ch: start}, {line: line, ch: end}, {className: "cc-JSLint-error-highlight"});
-        //marked.clear();
+        var marked = editor._codeMirror.markText({line: lineStart, ch: charStart}, {line: lineEnd, ch: charEnd}, {className: "cc-JSLint-error-highlight"});
+
         console.log("Finished markErrors");
     }
 
+    //Function that clears all the underlined lines
     function clearErrors(){
         var editor = EditorManager.getFocusedEditor();
 
