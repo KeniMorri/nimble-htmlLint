@@ -1,20 +1,22 @@
 //Index 0 returns human-readable message
-//Index 1 returns start of the error
-//Index 2 returns end of the error
+//Index 1 returns start character of the error
+//Index 2 returns end character of the error
 //Index 3 returns the start line number
 //Index 4 returns the end line number
+//Index 5 returns the output of the error
 
 define(function(require){
     function parser(input) {
         var parse = require("slowparse/slowparse");
         var result = parse.HTML(document, input);
-        var msg = [];   
+        var msg = []; 
+        var output = "";  
 
         if(result.error){
             var obj = result.error;
             var lineCount = 1;
-            var lineBegin = 0;
-            var lineEnd = 0;
+            var lineBeginStart = 0;
+            var lineBeginEnd = 0;
             var parsedText; 
             var charCount = 0;
 
@@ -57,6 +59,7 @@ define(function(require){
                 "UNTERMINATED_OPEN_TAG": "<p>The opening <code>&lt;[[result.error.openTag.name]]&gt;</code> tag <em data-highlight='[[result.error.openTag.start]],[[result.error.openTag.end]]'>here</em> doesn't end with a <code>&gt;</code>.</p>"
             };
             
+            //human-readable msg, start, end of error based on error type
             if (obj.type === "ATTRIBUTE_IN_CLOSING_TAG"){
                 msg[0] = errorJSON.ATTRIBUTE_IN_CLOSING_TAG;
                 msg[1] = obj.closeTag.start;
@@ -228,17 +231,44 @@ define(function(require){
                 msg[2] = obj.openTag.end;
             }
 
+	        for(var i = msg[1]; i <= msg[2]; i++){
+	            output += input[i];
+	        }
+	        msg[5] = output;
+
+            //Finds the line number for the start of the error
             for(var i = 0; i <= (msg[1] + 1); i++)
             {
                 if(input[i] === "\n")
                 {
                     lineCount += 1;
-                    lineBegin = i;
+                    lineBeginStart = i;
                 }
                 parsedText += input[i];
                 charCount++;
             }
+            //line number for start of error
             msg[3] = lineCount;
+
+            ////Finds the line number for the end of the error
+            for(var i = (msg[1] + 1); i <= (msg[2] + 1); i++)
+            {
+                if(input[i] === "\n")
+                {
+                    lineCount += 1;
+                    lineBeginEnd = i;
+                }
+                parsedText += input[i];
+                charCount++;
+            }
+            //character relative to start of the row
+            msg[1] = msg[1] - lineBeginStart
+            msg[2] = msg[2] - lineBeginEnd;
+            
+            //line number for end of error
+            msg[4] = lineCount;
+
+
         }
        return msg;
     }
