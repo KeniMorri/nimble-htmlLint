@@ -20,17 +20,17 @@ define(function(require){
             var parsedText; 
             var charCount = 0;
             var errorJSON = {
-                "ATTRIBUTE_IN_CLOSING_TAG": "<p>The closing <code>&lt;/[[result.error.closeTag.name]]&gt;</code> tag <em data-highlight='[[result.error.closeTag.start]],[[result.error.closeTag.end]]'>here</em> cannot contain any attributes.</p>",
-                "CLOSE_TAG_FOR_VOID_ELEMENT": "<p>The closing <code>&lt;/[[result.error.closeTag.name]]&gt;</code> tag <em data-highlight='[[result.error.closeTag.start]],[[result.error.closeTag.end]]'>here</em> is for a void element (that is, an element that doesn't need to be closed).</p>",
-                "CSS_MIXED_ACTIVECONTENT": "<p>The css property <em data-highlight='[[result.error.cssProperty.start]],[[result.error.cssProperty.end]]'>[[result.error.cssProperty.property]]</em> has a url() value <em data-highlight='[[result.error.cssValue.start]],[[result.error.cssValue.end]]'>here</em> that currently points to an insecure resource. You can make this error disappear by logging into webmaker. For more information on how modern browsers signal insecure content, visit <a href='https://developer.mozilla.org/en-US/docs/Security/MixedContent'>this link</a>.</p>",
-                "EVENT_HANDLER_ATTR_NOT_ALLOWED": "<p>Sorry, but security restrictions on this site prevent you from using the JavaScript event handler attribute <em data-highlight='[[result.error.name.start]],[[result.error.name.end]]'>here</em>. If you really need to use JavaScript, consider using <a href='http://jsbin.com/'>jsbin</a> or <a href='http://jsfiddle.net/'>jsfiddle</a>.</p>",
-                "HTML_CODE_IN_CSS_BLOCK": "<p>HTML code was detected in CSS context starting <em data-highlight='[[result.error.html.start]],[[result.error.html.end]]'>here</em></p>",
-                "HTTP_LINK_FROM_HTTPS_PAGE": "<p>The <code>&lt;[[result.error.openTag.name]]&gt;</code> tag's <code>[[result.error.attribute.name.value]]</code> attribute (<em data-highlight='[[result.error.attribute.value.start]],[[result.error.attribute.value.end]]'>here</em>) currently points to an insecure resource. You can make this error disappear by logging into webmaker. For more information on how modern browsers signal insecure content, visit <a href='https://developer.mozilla.org/en-US/docs/Security/MixedContent'>this link</a>.</p>",
-                "INVALID_ATTR_NAME": "<p>The attribute <em data-highlight='[[result.error.start]],[[result.error.end]]'>here</em> has a name that is not permitted under HTML5 naming conventions.</p>",
-                "UNSUPPORTED_ATTR_NAMESPACE": "<p>The attribute <em data-highlight='[[result.error.start]],[[result.error.end]]'>here</em> uses an attribute namespace that is not permitted under HTML5 conventions.</p>",
-                "MULTIPLE_ATTR_NAMESPACES": "<p>The attribute <em data-highlight='[[result.error.start]],[[result.error.end]]'>here</em> has multiple namespaces. Check your text and make sure there's only a single namespace prefix for the attribute.</p>",
-                "INVALID_CSS_DECLARATION": "<p><em data-highlight='[[result.error.cssDeclaration.start]],[[result.error.cssDeclaration.end]]'>This</em> CSS declaration never closes.</p>",
-                "INVALID_CSS_PROPERTY_NAME": "<p>CSS property <em data-highlight='[[result.error.cssProperty.start]],[[result.error.cssProperty.end]]'>[[result.error.cssProperty.property]]</em> does not exist. You may want to see a <a href='https://developer.mozilla.org/en/CSS/CSS_Reference'>list of CSS properties</a>.</p>",
+                "ATTRIBUTE_IN_CLOSING_TAG": "<p>The closing <code>&lt;/{{ error }}&gt;</code> tag cannot contain any attributes.</p>",
+                "CLOSE_TAG_FOR_VOID_ELEMENT": "<p>The closing <code>&lt;/{{ error }}&gt;</code> tag is for a void element (that is, an element that doesn't need to be closed).</p>",
+                "CSS_MIXED_ACTIVECONTENT": "<p>The css property has a url() value that currently points to an insecure resource. You can make this error disappear by logging into webmaker. For more information on how modern browsers signal insecure content, visit <a href='https://developer.mozilla.org/en-US/docs/Security/MixedContent'>this link</a>.</p>",
+                "EVENT_HANDLER_ATTR_NOT_ALLOWED": "<p>Sorry, but security restrictions on this site prevent you from using the JavaScript event handler attribute. If you really need to use JavaScript, consider using <a href='http://jsbin.com/'>jsbin</a> or <a href='http://jsfiddle.net/'>jsfiddle</a>.</p>",
+                "HTML_CODE_IN_CSS_BLOCK": "<p>HTML code was detected in CSS context</p>",
+                "HTTP_LINK_FROM_HTTPS_PAGE": "<p>The <code>&lt;{{ error }}&gt;</code> tag's <code>{{ error1 }}</code> attribute currently points to an insecure resource. You can make this error disappear by logging into webmaker. For more information on how modern browsers signal insecure content, visit <a href='https://developer.mozilla.org/en-US/docs/Security/MixedContent'>this link</a>.</p>",
+                "INVALID_ATTR_NAME": "<p>The attribute has a name that is not permitted under HTML5 naming conventions.</p>",
+                "UNSUPPORTED_ATTR_NAMESPACE": "<p>The attribute uses an attribute namespace that is not permitted under HTML5 conventions.</p>",
+                "MULTIPLE_ATTR_NAMESPACES": "<p>The attribute has multiple namespaces. Check your text and make sure there's only a single namespace prefix for the attribute.</p>",
+                "INVALID_CSS_DECLARATION": "<p>This CSS declaration never closes.</p>",
+/*Left off here*/"INVALID_CSS_PROPERTY_NAME": "<p>CSS property [[result.error.cssProperty.property]] does not exist. You may want to see a <a href='https://developer.mozilla.org/en/CSS/CSS_Reference'>list of CSS properties</a>.</p>",
                 "INVALID_CSS_RULE": "<p><em data-highlight='[[result.error.cssRule.start]],[[result.error.cssRule.end]]'>This</em> CSS rule is not legal CSS.</p>",
                 "INVALID_TAG_NAME": "<p>The <code>&lt;</code> character <em data-highlight='[[result.error.openTag.start]],[[result.error.openTag.end]]'>here</em> appears to be the beginning of a tag, but is not followed by a valid tag name.</p> <p>If you just want a <code>&lt;</code> to appear on your Web page, try using <code>&amp;lt;</code> instead.</p> <p>Or, see a <a href='https://developer.mozilla.org/en/docs/Web/Guide/HTML/HTML5/HTML5_element_list'>list of HTML5 tags</a>.</p>",
                 "JAVASCRIPT_URL_NOT_ALLOWED": "<p>Sorry, but security restrictions on this site prevent you from using the <code>javascript:</code> URL <em data-highlight='[[result.error.value.start]],[[result.error.value.end]]'>here</em>. If you really need to use JavaScript, consider using <a href='http://jsbin.com/'>jsbin</a> or <a href='http://jsfiddle.net/'>jsfiddle</a>.</p>",
@@ -60,12 +60,12 @@ define(function(require){
             
             //human-readable msg, start, end of error based on error type
             if (obj.type === "ATTRIBUTE_IN_CLOSING_TAG"){
-                msg[0] = errorJSON.ATTRIBUTE_IN_CLOSING_TAG;
+                msg[0] = Mustache.render(errorJSON.ATTRIBUTE_IN_CLOSING_TAG, { 'error': obj.closeTag.name });
                 msg[1] = obj.closeTag.start;
                 msg[2] = obj.closeTag.end;
             }
             if (obj.type === "CLOSE_TAG_FOR_VOID_ELEMENT"){
-                msg[0] = errorJSON.CLOSE_TAG_FOR_VOID_ELEMENT;
+                msg[0] = Mustache.render(errorJSON.CLOSE_TAG_FOR_VOID_ELEMENT, { 'error': obj.closeTag.name });
                 msg[1] = obj.closeTag.start;
                 msg[2] = obj.closeTag.end;
             }
@@ -82,8 +82,8 @@ define(function(require){
                 msg[1] = obj.html.start;
                 msg[2] = obj.html.end;
             }
-            if (obj.type === "HTTP_LINK_FROM_HTTPS_PAGE"){
-                msg[0] = errorJSON.HTTP_LINK_FROM_HTTPS_PAGE;
+            if (obj.type === "HTTP_LINK_FROM_HTTPS_PAGE"){ 
+                msg[0] = Mustache.render(errorJSON.HTTP_LINK_FROM_HTTPS_PAGE, { 'error': obj.openTag.name, 'error1': obj.attribute.name.value});
                 msg[1] = obj.openTag.start;
                 msg[2] = obj.openTag.end;
             }
