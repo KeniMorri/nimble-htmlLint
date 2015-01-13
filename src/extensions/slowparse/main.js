@@ -8,6 +8,9 @@ define(function (require, exports, module) {
         WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser");   
+    
+    var BottomDisplay = require('BottomDisplayPanal'),
+        BottomDisplayVar;
 
     function main(){
         var editor = EditorManager.getFocusedEditor();
@@ -15,35 +18,9 @@ define(function (require, exports, module) {
         var result = parser(text);
 
         if(result.length > 0){
-
-            //TEMP CODE FOR KLEVER
-            //Line counter code
-           /* var endCount = 0;
-            var linebegin = 0;
-            var text2, characterCount = 0;
-            for(var i = 0; i <= (result[2] - 1); i++)
-            {
-                if(text[i] == "\n")
-                {
-                    endCount += 1;
-                    linebegin = i;
-                }
-                text2 += text[i];
-                characterCount++;
-            }*/
-            //if(text2){
-            //window.alert("EndLine Equals: " + endCount +"\n Line Begin was: " + linebegin + "\n result was: " + result[1] + "\n" + text2);
-            //console.log("EndLine Equals: " + endCount +"\n Line Begin was: " + linebegin + "\n result was: " + result[1] + "\n");
-            //console.log("Charater at Result was: " + text2[result[1]] + " " + text2[result[2]]);
-            //console.log("Character at linebegin was: " + text2[linebegin] + " Line Begin: " + linebegin + " Result 2: " + result[2]);
-            //console.log(text2[196] + text2[197] + text2[198] + text2[199] + text2[200] + text2[201] + text2[202] + text2[203] + text2[204]);
-            //END TEMP CODE
-            //}
-           // var characterAt = result[2] - linebegin;
-
             MarkErrors.markErrors(0, 0, 0);
             console.log("Error Found");
-            window.alert(result[0]);
+            //window.alert(result[0]);
 
         }else{
             MarkErrors.clearErrors();
@@ -57,6 +34,7 @@ define(function (require, exports, module) {
         }
         console.log("The strings between are:\n" + output);
         console.log("Line Count: ", result[3]);
+        BottomDisplayVar.update(result[0]);
     }
 
      //Keyboard event handler
@@ -77,17 +55,38 @@ define(function (require, exports, module) {
             $(focusedEditor).on("keydown", keyEventHandler);
         }
     };
-
+    
+    
+    //functions for Command menu
+    function showpan() {
+        console.log("Showing Panel");
+        BottomDisplayVar.panelRender(true);
+    }
+    function hidepan() {
+        console.log("Hiding Panel");
+        BottomDisplayVar.panelRender(false);
+    }
+    function run_checker() {
+        console.log("Run checker");
+        BottomDisplayVar.update("Hello this is the temp error while I make this work");
+    }
+    
     // First, register a command - a UI-less object associating an id to a handler
-    var MY_COMMAND_ID = "slowparse"; // package-style naming to avoid collisions
-    CommandManager.register("Show Slowparse Panel", MY_COMMAND_ID, main);
-
+    var MY_COMMAND_ID = "Show_Slowparse_Panel"; // package-style naming to avoid collisions
+    CommandManager.register("Show_Slowparse_Panel", MY_COMMAND_ID, showpan);
+    var MY_COMMAND_ID2 = "Hide_SlowParse_Panel";
+    CommandManager.register("Hide_Slowparse_Panel", MY_COMMAND_ID2, hidepan); 
+    var MY_COMMAND_ID3 = "Run_Checker";
+    CommandManager.register("Run_Checker", MY_COMMAND_ID3, main);
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     menu.addMenuItem(MY_COMMAND_ID);
+    menu.addMenuItem(MY_COMMAND_ID2);
+    menu.addMenuItem(MY_COMMAND_ID3);
 
     AppInit.appReady(function(){
+        BottomDisplayVar = new BottomDisplay();
         var currentEditor = EditorManager.getCurrentFullEditor();
         $(currentEditor).on('keyEvent', keyEventHandler);
         $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
