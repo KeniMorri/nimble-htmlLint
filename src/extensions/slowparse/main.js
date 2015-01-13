@@ -6,6 +6,7 @@ define(function (require, exports, module) {
         AppInit             = brackets.getModule('utils/AppInit'),
         EditorManager       = brackets.getModule("editor/EditorManager"),
         WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
+        DocumentManager     = brackets.getModule("document/DocumentManager"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser");   
     
@@ -17,30 +18,27 @@ define(function (require, exports, module) {
         var text   = editor.document.getText();
         var result = parser(text);
 
-        if(result.length > 0){
-            MarkErrors.markErrors(0, 0, 0);
-            console.log("Error Found");
-            //window.alert(result[0]);
+        //console.log(editor.document.getLanguage()._name);
+        if(editor && editor.document.getLanguage()._name === 'HTML'){
+            if(result.length > 0){
+                MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
+                console.log("Error Found");
+                console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
+                console.log("The strings between are:\n" + result[5]);
 
-        }else{
-            MarkErrors.clearErrors();
-            console.log("No Errors Found");
+            }else{
+                MarkErrors.clearErrors();
+                console.log("No Errors Found");
+            }
         }
-        console.log("The Error Happens Between : " + result[1] + "-" + result[2]);
-        var output;
-        for(var i = result[1]; i <= result[2];i++)
-        {
-            output += text[i];
-        }
-        console.log("The strings between are:\n" + output);
-        console.log("Line Count: ", result[3]);
         BottomDisplayVar.update(result[0]);
     }
 
-     //Keyboard event handler
+    //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
-        if ((event.type === "keydown") /*&& (event.keyCode === 9)*/) {
-            console.log("Key pressed!");
+
+        if ((event.type === "keyup")) {
+            //console.log("Key pressed!");
             main();
         }
     };
@@ -48,28 +46,30 @@ define(function (require, exports, module) {
     //Switching editors
     var activeEditorChangeHandler = function ($event, focusedEditor, lostEditor) {
         if (lostEditor) {
-            $(lostEditor).off("keydown", keyEventHandler);
+            $(lostEditor).off("keyup", keyEventHandler);
         }
 
         if (focusedEditor) {
-            $(focusedEditor).on("keydown", keyEventHandler);
+            $(focusedEditor).on("keyup", keyEventHandler);
         }
     };
     
-    
-    //functions for Command menu
     function showpan() {
         console.log("Showing Panel");
         BottomDisplayVar.panelRender(true);
     }
+    
     function hidepan() {
         console.log("Hiding Panel");
         BottomDisplayVar.panelRender(false);
     }
+    
     function run_checker() {
         console.log("Run checker");
         BottomDisplayVar.update("Hello this is the temp error while I make this work");
     }
+    
+    
     
     // First, register a command - a UI-less object associating an id to a handler
     var MY_COMMAND_ID = "Show_Slowparse_Panel"; // package-style naming to avoid collisions
@@ -84,10 +84,11 @@ define(function (require, exports, module) {
     menu.addMenuItem(MY_COMMAND_ID);
     menu.addMenuItem(MY_COMMAND_ID2);
     menu.addMenuItem(MY_COMMAND_ID3);
-
+    
     AppInit.appReady(function(){
         BottomDisplayVar = new BottomDisplay();
         var currentEditor = EditorManager.getCurrentFullEditor();
+        var CurrentDoc = DocumentManager.getCurrentDocument();
         $(currentEditor).on('keyEvent', keyEventHandler);
         $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
     });
