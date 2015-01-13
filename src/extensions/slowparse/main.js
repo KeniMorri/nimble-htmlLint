@@ -25,13 +25,15 @@ define(function (require, exports, module) {
                 console.log("Error Found");
                 console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
                 console.log("The strings between are:\n" + result[5]);
-
+                BottomDisplayVar.update(result[0]);
             }else{
                 MarkErrors.clearErrors();
                 console.log("No Errors Found");
+                BottomDisplayVar.update(text);
             }
+            
         }
-        BottomDisplayVar.update(result[0]);
+        
     }
 
     //Keyboard event handler
