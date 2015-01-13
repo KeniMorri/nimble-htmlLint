@@ -21,7 +21,7 @@ define(function (require, exports, module) {
         //console.log(editor.document.getLanguage()._name);
         if(editor && editor.document.getLanguage()._name === 'HTML'){
             if(result.length > 0){
-                MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
+                MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
                 console.log("Error Found");
                 console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
                 console.log("The strings between are:\n" + result[5]);
@@ -83,9 +83,9 @@ define(function (require, exports, module) {
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
-    menu.addMenuItem(MY_COMMAND_ID);
-    menu.addMenuItem(MY_COMMAND_ID2);
-    menu.addMenuItem(MY_COMMAND_ID3);
+    menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-U");
+    menu.addMenuItem(MY_COMMAND_ID2, "Ctrl-Alt-Y");
+    menu.addMenuItem(MY_COMMAND_ID3, "Ctrl-Alt-T");
     
     AppInit.appReady(function(){
         BottomDisplayVar = new BottomDisplay();
