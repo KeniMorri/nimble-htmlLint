@@ -19,7 +19,6 @@ define(function(require){
             var lineBeginEnd = 0;
             var parsedText; 
             var charCount = 0;
-
             var errorJSON = {
                 "ATTRIBUTE_IN_CLOSING_TAG": "<p>The closing <code>&lt;/[[result.error.closeTag.name]]&gt;</code> tag <em data-highlight='[[result.error.closeTag.start]],[[result.error.closeTag.end]]'>here</em> cannot contain any attributes.</p>",
                 "CLOSE_TAG_FOR_VOID_ELEMENT": "<p>The closing <code>&lt;/[[result.error.closeTag.name]]&gt;</code> tag <em data-highlight='[[result.error.closeTag.start]],[[result.error.closeTag.end]]'>here</em> is for a void element (that is, an element that doesn't need to be closed).</p>",
@@ -230,7 +229,6 @@ define(function(require){
                 msg[1] = obj.openTag.start;
                 msg[2] = obj.openTag.end;
             }
-
 	        for(var i = msg[1]; i <= msg[2]; i++){
 	            output += input[i];
 	        }
@@ -267,8 +265,6 @@ define(function(require){
             
             //line number for end of error
             msg[4] = lineCount;
-
-
         }
        return msg;
     }

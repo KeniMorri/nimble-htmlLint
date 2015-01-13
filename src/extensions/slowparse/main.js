@@ -9,6 +9,9 @@ define(function (require, exports, module) {
         DocumentManager     = brackets.getModule("document/DocumentManager"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser");   
+    
+    var BottomDisplay = require('BottomDisplayPanal'),
+        BottomDisplayVar;
 
     function main(){
         var editor = EditorManager.getFocusedEditor();
@@ -16,11 +19,8 @@ define(function (require, exports, module) {
         var result = parser(text);
 
         //console.log(editor.document.getLanguage()._name);
-
         if(editor && editor.document.getLanguage()._name === 'HTML'){
-
             if(result.length > 0){
-
                 MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
                 console.log("Error Found");
                 console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
@@ -31,13 +31,13 @@ define(function (require, exports, module) {
                 console.log("No Errors Found");
             }
         }
+        BottomDisplayVar.update(result[0]);
     }
 
     //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
 
         if ((event.type === "keyup")) {
-
             //console.log("Key pressed!");
             main();
         }
@@ -53,22 +53,44 @@ define(function (require, exports, module) {
             $(focusedEditor).on("keyup", keyEventHandler);
         }
     };
-
+    
+    function showpan() {
+        console.log("Showing Panel");
+        BottomDisplayVar.panelRender(true);
+    }
+    
+    function hidepan() {
+        console.log("Hiding Panel");
+        BottomDisplayVar.panelRender(false);
+    }
+    
+    function run_checker() {
+        console.log("Run checker");
+        BottomDisplayVar.update("Hello this is the temp error while I make this work");
+    }
+    
+    
+    
     // First, register a command - a UI-less object associating an id to a handler
-    var MY_COMMAND_ID = "slowparse"; // package-style naming to avoid collisions
-    CommandManager.register("Show Slowparse Panel", MY_COMMAND_ID, main);
-
+    var MY_COMMAND_ID = "Show_Slowparse_Panel"; // package-style naming to avoid collisions
+    CommandManager.register("Show_Slowparse_Panel", MY_COMMAND_ID, showpan);
+    var MY_COMMAND_ID2 = "Hide_SlowParse_Panel";
+    CommandManager.register("Hide_Slowparse_Panel", MY_COMMAND_ID2, hidepan); 
+    var MY_COMMAND_ID3 = "Run_Checker";
+    CommandManager.register("Run_Checker", MY_COMMAND_ID3, main);
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     menu.addMenuItem(MY_COMMAND_ID);
-
+    menu.addMenuItem(MY_COMMAND_ID2);
+    menu.addMenuItem(MY_COMMAND_ID3);
+    
     AppInit.appReady(function(){
-        var currentEditor = EditorManager.getCurrentFullEditor(),
-            CurrentDoc    = DocumentManager.getCurrentDocument();
- 
-            $(currentEditor).on('keyEvent', keyEventHandler);
-            $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
+        BottomDisplayVar = new BottomDisplay();
+        var currentEditor = EditorManager.getCurrentFullEditor();
+        var CurrentDoc = DocumentManager.getCurrentDocument();
+        $(currentEditor).on('keyEvent', keyEventHandler);
+        $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
     });
 
     // We could also add a key binding at the same time:
