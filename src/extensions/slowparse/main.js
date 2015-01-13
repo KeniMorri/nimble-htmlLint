@@ -6,6 +6,7 @@ define(function (require, exports, module) {
         AppInit             = brackets.getModule('utils/AppInit'),
         EditorManager       = brackets.getModule("editor/EditorManager"),
         WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
+        DocumentManager     = brackets.getModule("document/DocumentManager"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser");   
     
@@ -17,55 +18,28 @@ define(function (require, exports, module) {
         var text   = editor.document.getText();
         var result = parser(text);
 
-        if(result.length > 0){
+        //console.log(editor.document.getLanguage()._name);
+        if(editor && editor.document.getLanguage()._name === 'HTML'){
+            if(result.length > 0){
+                MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
+                console.log("Error Found");
+                console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
+                console.log("The strings between are:\n" + result[5]);
 
-            //TEMP CODE FOR KLEVER
-            //Line counter code
-            var endCount = 0;
-            var linebegin = 0;
-            var text2, characterCount = 0;
-            for(var i = 0; i <= (result[2] - 1); i++)
-            {
-                if(text[i] == "\n")
-                {
-                    endCount += 1;
-                    linebegin = i;
-                }
-                text2 += text[i];
-                characterCount++;
+            }else{
+                MarkErrors.clearErrors();
+                console.log("No Errors Found");
             }
-            if(text2){
-            //window.alert("EndLine Equals: " + endCount +"\n Line Begin was: " + linebegin + "\n result was: " + result[1] + "\n" + text2);
-            //console.log("EndLine Equals: " + endCount +"\n Line Begin was: " + linebegin + "\n result was: " + result[1] + "\n");
-            //console.log("Charater at Result was: " + text2[result[1]] + " " + text2[result[2]]);
-            //console.log("Character at linebegin was: " + text2[linebegin] + " Line Begin: " + linebegin + " Result 2: " + result[2]);
-            //console.log(text2[196] + text2[197] + text2[198] + text2[199] + text2[200] + text2[201] + text2[202] + text2[203] + text2[204]);
-            //END TEMP CODE
-            }
-            var characterAt = result[2] - linebegin;
-
-            MarkErrors.markErrors(endCount - 1, result[1] - linebegin, characterAt);
-            console.log("Error Found");
-
-        }else{
-            MarkErrors.clearErrors();
-            console.log("No Errors Found");
         }
-        console.log("The Error Happens Between : " + result[1] + "-" + result[2]);
-        var output;
-        for(var i = result[1]; i <= result[2];i++)
-        {
-            output += text[i];
-        }
-        console.log("The strings between are:\n" + output);
-        
         BottomDisplayVar.update(result[0]);
     }
 
-     //Keyboard event handler
+    //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
-        if ((event.type === "keydown") /*&& (event.keyCode === 9)*/) {
-            console.log("Key pressed!");
+
+        if ((event.type === "keyup")) {
+
+            //console.log("Key pressed!");
             main();
         }
     };
@@ -73,11 +47,11 @@ define(function (require, exports, module) {
     //Switching editors
     var activeEditorChangeHandler = function ($event, focusedEditor, lostEditor) {
         if (lostEditor) {
-            $(lostEditor).off("keydown", keyEventHandler);
+            $(lostEditor).off("keyup", keyEventHandler);
         }
 
         if (focusedEditor) {
-            $(focusedEditor).on("keydown", keyEventHandler);
+            $(focusedEditor).on("keyup", keyEventHandler);
         }
     };
     
