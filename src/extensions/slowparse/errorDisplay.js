@@ -20,7 +20,7 @@ define(function (require, exports, module) {
 
         var marked = editor._codeMirror.markText({line: lineStart, ch: charStart}, {line: lineEnd, ch: charEnd}, {className: "cc-JSLint-error-highlight"});
 
-        console.log("Finished markErrors");
+        //console.log("Finished markErrors");
     }
 
     //Function that clears all the underlined lines
@@ -37,7 +37,7 @@ define(function (require, exports, module) {
             });
         }
         
-        console.log("Clear Underline");
+        //console.log("Clear Underline");
 
     }
 

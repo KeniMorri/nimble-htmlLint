@@ -23,25 +23,21 @@ define(function (require, exports, module) {
 
                 MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
                 console.log("Error Found");
+                console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
+                console.log("The strings between are:\n" + result[5]);
 
             }else{
                 MarkErrors.clearErrors();
                 console.log("No Errors Found");
             }
-            console.log("The Error Happens Between : " + result[1] + "-" + result[2]);
-            var output;
-            for(var i = result[1]; i <= result[2];i++)
-            {
-                output += text[i];
-            }
-            console.log("The strings between are:\n" + output);
-            console.log("Line Count: ", result[3]);
         }
     }
 
     //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
+
         if ((event.type === "keyup")) {
+
             //console.log("Key pressed!");
             main();
         }
