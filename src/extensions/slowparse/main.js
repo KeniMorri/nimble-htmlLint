@@ -6,6 +6,7 @@ define(function (require, exports, module) {
         AppInit             = brackets.getModule('utils/AppInit'),
         EditorManager       = brackets.getModule("editor/EditorManager"),
         WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
+        DocumentManager     = brackets.getModule("document/DocumentManager"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser");   
 
@@ -14,21 +15,29 @@ define(function (require, exports, module) {
         var text   = editor.document.getText();
         var result = parser(text);
 
-        if(result.length > 0){
-            MarkErrors.markErrors(1, 1, result[2], result[3]);
-            console.log("Error Found");
-            console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
-        	console.log("The strings between are:\n" + result[5]);
-        }
-        else{
-            MarkErrors.clearErrors();
-            console.log("No Errors Found");
+        //console.log(editor.document.getLanguage()._name);
+
+        if(editor && editor.document.getLanguage()._name === 'HTML'){
+
+            if(result.length > 0){
+
+                MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
+                console.log("Error Found");
+                console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
+                console.log("The strings between are:\n" + result[5]);
+
+            }else{
+                MarkErrors.clearErrors();
+                console.log("No Errors Found");
+            }
         }
     }
 
-     //Keyboard event handler
+    //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
-        if ((event.type === "keyup") /*&& (event.keyCode === 9)*/) {
+
+        if ((event.type === "keyup")) {
+
             //console.log("Key pressed!");
             main();
         }
@@ -55,9 +64,11 @@ define(function (require, exports, module) {
     menu.addMenuItem(MY_COMMAND_ID);
 
     AppInit.appReady(function(){
-        var currentEditor = EditorManager.getCurrentFullEditor();
-        $(currentEditor).on('keyEvent', keyEventHandler);
-        $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
+        var currentEditor = EditorManager.getCurrentFullEditor(),
+            CurrentDoc    = DocumentManager.getCurrentDocument();
+ 
+            $(currentEditor).on('keyEvent', keyEventHandler);
+            $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
     });
 
     // We could also add a key binding at the same time:
