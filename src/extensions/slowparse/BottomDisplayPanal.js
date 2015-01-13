@@ -28,8 +28,7 @@ define(function (require) {
     };
     BottomDisplay.prototype.update = function (text)
     {
-        //var renderedError = Mustache.render(ErrorHTML, { 'ErrorText': text });
-        var renderedError = $(text);
+        var renderedError = Mustache.render(ErrorHTML, { 'ErrorText': text });
         this._panel.find('.table-container').empty().append($(renderedError));
     }
     BottomDisplay.prototype._onClose = function ()
