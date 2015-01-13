@@ -1,8 +1,7 @@
 //Index 0 returns human-readable message
 //Index 1 returns start of the error
 //Index 2 returns end of the error
-//Index 3 returns the start line number
-//Index 4 returns the end line number
+//Index 3 returns the error object
 
 define(function(require){
     function parser(input) {
@@ -12,11 +11,7 @@ define(function(require){
 
         if(result.error){
             var obj = result.error;
-            var lineCount = 1;
-            var lineBegin = 0;
-            var lineEnd = 0;
-            var parsedText; 
-            var charCount = 0;
+            msg[3] = obj;
 
             var errorJSON = {
                 "ATTRIBUTE_IN_CLOSING_TAG": "<p>The closing <code>&lt;/[[result.error.closeTag.name]]&gt;</code> tag <em data-highlight='[[result.error.closeTag.start]],[[result.error.closeTag.end]]'>here</em> cannot contain any attributes.</p>",
@@ -227,18 +222,6 @@ define(function(require){
                 msg[1] = obj.openTag.start;
                 msg[2] = obj.openTag.end;
             }
-
-            for(var i = 0; i <= (msg[1] + 1); i++)
-            {
-                if(input[i] === "\n")
-                {
-                    lineCount += 1;
-                    lineBegin = i;
-                }
-                parsedText += input[i];
-                charCount++;
-            }
-            msg[3] = lineCount;
         }
        return msg;
     }
