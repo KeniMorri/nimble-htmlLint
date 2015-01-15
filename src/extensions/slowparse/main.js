@@ -7,45 +7,55 @@ define(function (require, exports, module) {
         EditorManager       = brackets.getModule("editor/EditorManager"),
         WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
         DocumentManager     = brackets.getModule("document/DocumentManager"),
+        Document            = brackets.getModule("document/Document"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser");   
+    
+    var BottomDisplay = require('BottomDisplayPanal'),
+        BottomDisplayVar;
 
     function main(){
         var editor = EditorManager.getFocusedEditor();
-        var text   = editor.document.getText();
-        var result = parser(text);
 
         //console.log(editor.document.getLanguage()._name);
-
         if(editor && editor.document.getLanguage()._name === 'HTML'){
-
+            var text   = editor.document.getText();
+            var result = parser(text);
+            
             if(result.length > 0){
-
-                MarkErrors.markErrors(result[3] - 1, result[3] - 1, 0, 20);
+                MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
                 console.log("Error Found");
+                console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
+                console.log("The strings between are:\n" + result[5]);
+                MarkErrors.showWidget(result[0], result[3] - 1);
+                MarkErrors.showGutter(result[3] - 1);
 
             }else{
                 MarkErrors.clearErrors();
+                MarkErrors.removeGutter();
+                MarkErrors.removeWidget();
                 console.log("No Errors Found");
             }
-            console.log("The Error Happens Between : " + result[1] + "-" + result[2]);
-            var output;
-            for(var i = result[1]; i <= result[2];i++)
-            {
-                output += text[i];
-            }
-            console.log("The strings between are:\n" + output);
-            console.log("Line Count: ", result[3]);
+            BottomDisplayVar.update(result[0]);
         }
     }
 
     //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
+
         if ((event.type === "keyup")) {
             //console.log("Key pressed!");
             main();
         }
     };
+
+    /*var changeEventHandler = function ($event, editor, event) {
+
+        if ((event.type === "change")) {
+            //console.log("Key pressed!");
+            main();
+        }
+    };*/
 
     //Switching editors
     var activeEditorChangeHandler = function ($event, focusedEditor, lostEditor) {
@@ -58,24 +68,51 @@ define(function (require, exports, module) {
         }
     };
 
+    /*var activeDocumentChangeHandler = function ($event, focusedEditor, lostEditor) {
+        if (lostEditor) {
+            $(lostEditor).off("change", changeEventHandler);
+        }
+
+        if (focusedEditor) {
+            $(focusedEditor).on("change", changeEventHandler);
+        }
+    };*/
+    
+    function showpan() {
+        console.log("Showing Panel");
+        BottomDisplayVar.panelRender(true);
+    }
+    
+    function hidepan() {
+        console.log("Hiding Panel");
+        BottomDisplayVar.panelRender(false);
+    }
+    
+    function run_checker() {
+        console.log("Run checker");
+        //BottomDisplayVar.update("Hello this is the temp error while I make this work");
+        main();
+    }
+    
     // First, register a command - a UI-less object associating an id to a handler
-    var MY_COMMAND_ID = "slowparse"; // package-style naming to avoid collisions
-    CommandManager.register("Show Slowparse Panel", MY_COMMAND_ID, main);
+    var MY_COMMAND_ID = "Show_Slowparse_Panel"; // package-style naming to avoid collisions
+    CommandManager.register("Show_Slowparse_Panel", MY_COMMAND_ID, showpan);
+    var MY_COMMAND_ID2 = "Hide_SlowParse_Panel";
+    CommandManager.register("Hide_Slowparse_Panel", MY_COMMAND_ID2, hidepan); 
+    var MY_COMMAND_ID3 = "Run_Checker";
+    CommandManager.register("Run_Checker", MY_COMMAND_ID3, main);
 
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
-    menu.addMenuItem(MY_COMMAND_ID);
-
+    menu.addMenuItem(MY_COMMAND_ID,  "Ctrl-Alt-U");
+    menu.addMenuItem(MY_COMMAND_ID2, "Ctrl-Alt-Y");
+    menu.addMenuItem(MY_COMMAND_ID3, "Ctrl-Alt-T");
+    
     AppInit.appReady(function(){
-        var currentEditor = EditorManager.getCurrentFullEditor(),
-            CurrentDoc    = DocumentManager.getCurrentDocument();
- 
-            $(currentEditor).on('keyEvent', keyEventHandler);
-            $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
+        BottomDisplayVar = new BottomDisplay();
+        var currentEditor = EditorManager.getCurrentFullEditor();
+        $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
+        //$(Document).on('change', activeDocumentChangeHandler);
     });
-
-    // We could also add a key binding at the same time:
-    //menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-H");
-    // (Note: "Ctrl" is automatically mapped to "Cmd" on Mac)
 });
