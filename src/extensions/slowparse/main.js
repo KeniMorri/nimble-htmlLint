@@ -9,7 +9,10 @@ define(function (require, exports, module) {
         DocumentManager     = brackets.getModule("document/DocumentManager"),
         Document            = brackets.getModule("document/Document"),
         MarkErrors          = require("errorDisplay"),
-        parser              = require("parser");   
+        parser              = require("parser"),
+        results             = [],
+        showingErrors       = false,
+        lastErrorIndex      = -1;   
     
     var BottomDisplay = require('BottomDisplayPanal'),
         BottomDisplayVar;
@@ -23,60 +26,98 @@ define(function (require, exports, module) {
             var result = parser(text);
             
             if(result.length > 0){
-                MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
-                console.log("Error Found");
-                console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
-                console.log("The strings between are:\n" + result[5]);
-                MarkErrors.showWidget(result[0], result[3] - 1);
+                results.push(result);
+                console.log("Error found at: " + (result[3] - 1));
+                console.log("Last Error Index: " + lastErrorIndex);
+                if(lastErrorIndex !== -1 && lastErrorIndex !== (result[3] - 1)){
+                    /*MarkErrors.clearErrors();
+                    MarkErrors.removeGutter();
+                    MarkErrors.removeWidget();
+                    results = [];*/
+                    clearAllErrors();
+                }
                 MarkErrors.showGutter(result[3] - 1);
+                MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
+                //console.log($(EditorManager).on("gutterClick", toggleErrors(result)));
+                lastErrorIndex = (result[3] - 1);
+                console.log("Error Found");
+                //console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
+                //console.log("The strings between are:\n" + result[5]);
+                //MarkErrors.showWidget(result[0], result[3] - 1);
+                
 
             }else{
-                MarkErrors.clearErrors();
+                /*MarkErrors.clearErrors();
                 MarkErrors.removeGutter();
                 MarkErrors.removeWidget();
+                //console.log($(EditorManager).off("gutterClick", toggleErrors(result)));
                 console.log("No Errors Found");
+                results = [];*/
+                clearAllErrors();
             }
             BottomDisplayVar.update(result[0]);
         }
+        return result;
+    }
+
+    var clearAllErrors = function(){
+        MarkErrors.clearErrors();
+        MarkErrors.removeGutter();
+        MarkErrors.removeWidget();
+        //console.log($(EditorManager).off("gutterClick", toggleErrors(result)));
+        console.log("No Errors Found");
+        results = [];
+    }
+
+    var toggleErrors = function(){
+        if(results.length > 0 && !showingErrors){
+            results.forEach(function (result) {
+                //MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
+                MarkErrors.showWidget(result[0], result[3] - 1);
+                console.log("Showing Errors");
+                showingErrors = true;     
+            });
+        }else if(showingErrors){
+            MarkErrors.removeWidget();
+            //MarkErrors.clearErrors();
+            showingErrors = false;
+            console.log("Not Showing Errors");
+        }else{
+            main();
+        }
+        console.log("In toggleErrors");
+
     }
 
     //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
 
-        if ((event.type === "keyup")) {
+        if (event.type === "keyup") {
             //console.log("Key pressed!");
             main();
+
         }
     };
 
-    /*var changeEventHandler = function ($event, editor, event) {
-
-        if ((event.type === "change")) {
-            //console.log("Key pressed!");
-            main();
-        }
-    };*/
 
     //Switching editors
     var activeEditorChangeHandler = function ($event, focusedEditor, lostEditor) {
+        var editor = EditorManager.getFocusedEditor();
         if (lostEditor) {
             $(lostEditor).off("keyup", keyEventHandler);
+            lostEditor._codeMirror.off("gutterClick", toggleErrors);
         }
 
         if (focusedEditor) {
             $(focusedEditor).on("keyup", keyEventHandler);
+
+            console.log("focused editor exists!");
+
+            focusedEditor._codeMirror.on("gutterClick", toggleErrors);
         }
+
     };
 
-    /*var activeDocumentChangeHandler = function ($event, focusedEditor, lostEditor) {
-        if (lostEditor) {
-            $(lostEditor).off("change", changeEventHandler);
-        }
-
-        if (focusedEditor) {
-            $(focusedEditor).on("change", changeEventHandler);
-        }
-    };*/
     
     function showpan() {
         console.log("Showing Panel");
@@ -113,6 +154,5 @@ define(function (require, exports, module) {
         BottomDisplayVar = new BottomDisplay();
         var currentEditor = EditorManager.getCurrentFullEditor();
         $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
-        //$(Document).on('change', activeDocumentChangeHandler);
     });
 });

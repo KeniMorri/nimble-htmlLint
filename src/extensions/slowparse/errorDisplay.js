@@ -10,6 +10,7 @@ define(function (require, exports, module) {
         gutters         = [];
 
     ExtensionUtils.loadStyleSheet(module, "main.less");
+    //ExtensionUtils.loadStyleSheet(module, "slowparse.css");
 
     //Function that underlines the given lines
     function markErrors(lineStart, lineEnd, charStart, charEnd) {
@@ -20,14 +21,7 @@ define(function (require, exports, module) {
 
         if(!cmDoc.length){
              var marked = editor._codeMirror.markText({line: lineStart, ch: charStart},
-            {line: lineEnd, ch: charEnd}, {className: "cc-JSLint-error-highlight"});
-
-            /*// create a node
-            var htmlNode =document.createElement("p");
-            var text =  document.createTextNode("Text or whatever");
-            htmlNode.appendChild(text);
-
-            console.log(editor._codeMirror.addLineWidget(lineStart, htmlNode));*/
+            {line: lineEnd, ch: charEnd}, {className: "underline"});
          }
 
        
@@ -61,22 +55,14 @@ define(function (require, exports, module) {
         var cmDoc = editor._codeMirror.getAllMarks();
         //console.log(cmDoc);
         var lineStats = editor._codeMirror.lineInfo(lineStart);
-        console.log(lineStats.widgets);
+        //console.log(lineStats.widgets);
 
-        /*var $lineNumberBoxForError = $("<div class='cc-JSLint-error-in-line CodeMirror-linenumber'/>");
-        var $errorMarkerInLineGutter = $("<span/>");
-        $errorMarkerInLineGutter.addClass("cc-JSLint-warning");
-        $lineNumberBoxForError.append($errorMarkerInLineGutter);
-        $errorMarkerInLineGutter.addClass("cc-JSLint-one-error");
-        $lineNumberBoxForError.attr("title", 0);
-        $errorMarkerInLineGutter.text("!");
-        console.log(editor._codeMirror.setGutterMarker(lineStart, "CodeMirror-linenumbers", $lineNumberBoxForError[0]));
-        //console.log(editor._codeMirror);*/
 
         if(!lineStats.widgets && widgetsErrors.length === 0){
 
             // create a node
             var htmlNode =document.createElement("p");
+          
             var text =  document.createTextNode(errorText);
             htmlNode.appendChild(text);
 
@@ -85,7 +71,7 @@ define(function (require, exports, module) {
 
             widgetsErrors.push(errrorWidget);
 
-            console.log(errrorWidget);
+            //console.log(errrorWidget);
          }
 
     }
@@ -104,15 +90,24 @@ define(function (require, exports, module) {
     function showGutter(lineStart){
         if(gutters.length === 0){
             var editor = EditorManager.getFocusedEditor();
-            var $lineNumberBoxForError = $("<div class='cc-JSLint-error-in-line CodeMirror-linenumber'/>");
+            //var $random = $("<div class='interactive-linter-gutter'>!</div>");
+            var $lineNumberBoxForError = $("<span class='cc-JSLint-warning'/>");
             var $errorMarkerInLineGutter = $("<span/>");
-            $errorMarkerInLineGutter.addClass("cc-JSLint-warning");
+            $errorMarkerInLineGutter.addClass("cc-JSLint-syntax-error");
             $lineNumberBoxForError.append($errorMarkerInLineGutter);
             $errorMarkerInLineGutter.addClass("cc-JSLint-one-error");
             $lineNumberBoxForError.attr("title", 0);
             $errorMarkerInLineGutter.text("!");
-            gutters.push(editor._codeMirror.setGutterMarker(lineStart, "CodeMirror-linenumbers", $lineNumberBoxForError[0]));
-            console.log(gutters);
+            gutters.push(editor._codeMirror.setGutterMarker(lineStart, "cc-JSLint-syntax-error", $lineNumberBoxForError[0]));
+            //gutters.push(editor._codeMirror.setGutterMarker(lineStart, "CodeMirror-linenumbers", $random[0]));
+            console.log(gutters[0]);
+            //var foundGutters = ["cc-JSLint-warning"];
+            var foundGutters = editor._codeMirror.getOption("gutters").slice(0);
+            if(foundGutters.indexOf("cc-JSLint-syntax-error") === -1){
+                foundGutters.unshift("cc-JSLint-syntax-error");
+            }
+            console.log(foundGutters);
+            editor._codeMirror.setOption("gutters", foundGutters);
         }
 
     }
@@ -121,7 +116,7 @@ define(function (require, exports, module) {
     function removeGutter(){
         var editor = EditorManager.getFocusedEditor();
         gutters = [];
-        editor._codeMirror.clearGutter("CodeMirror-linenumbers");
+        editor._codeMirror.clearGutter("cc-JSLint-syntax-error");
     }
 
     exports.markErrors   = markErrors;
