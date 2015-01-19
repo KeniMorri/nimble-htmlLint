@@ -1,5 +1,5 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, CodeMirror, brackets, less, $, XMLHttpRequest, document */
+/*global define, brackets, less, $, document */
 
 define(function (require, exports, module) {
 	"use strict";
@@ -10,71 +10,53 @@ define(function (require, exports, module) {
 		gutters = [];
 		ExtensionUtils.loadStyleSheet(module, "main.less");
 	
-	//Function that underlines the given lines
+	//Function that highlights the line(s) with errors
 	function markErrors(lineStart, lineEnd, charStart, charEnd) {
-		var editor = EditorManager.getFocusedEditor();
-		var cmDoc = editor._codeMirror.getAllMarks();
-		//console.log(cmDoc);
-		if(!cmDoc.length){
-			var marked = editor._codeMirror.markText({line: lineStart, ch: charStart}, {line: lineEnd, ch: charEnd}, {
-				className: "errorHighlight"
-			});
-			/*// create a node
-			var htmlNode =document.createElement("p");
-			var text = document.createTextNode("Text or whatever");
-			htmlNode.appendChild(text);
-			console.log(editor._codeMirror.addLineWidget(lineStart, htmlNode));*/
+		var editor   = EditorManager.getFocusedEditor();
+		var allMarks = editor._codeMirror.getAllMarks();
+
+		if(!allMarks.length){
+			editor._codeMirror.markText({line: lineStart, ch: charStart},
+				{line: lineEnd, ch: charEnd},
+				{ className: "errorHighlight"});
 		}
-		//console.log("Finished markErrors");
 	}
 	
-	//Function that clears all the underlined lines
+	//Function that clears all the highlighted lines
 	function clearErrors(){
-		var editor = EditorManager.getFocusedEditor();
-		var cmDoc = editor._codeMirror.getAllMarks();
-		console.log(cmDoc);
-		if(cmDoc.length > 0){
-			cmDoc.forEach(function(element){
+		var editor   = EditorManager.getFocusedEditor();
+		var allMarks = editor._codeMirror.getAllMarks();
+
+		if(allMarks.length > 0){
+			allMarks.forEach(function(element){
 				element.clear();
 			});
 		}
-		//var widgets = editor._codeMirror.getWidgets();
-		//console.log(widgets);
-		//console.log("Clear Underline");
 	}
 	
 	//Function that creates a widget under the line where the error
 	//is located and displays the error message.
 	function showWidget(errorText, lineStart){
-		var editor = EditorManager.getFocusedEditor();
-		var cmDoc = editor._codeMirror.getAllMarks();
-		//console.log(cmDoc);
+		var editor    = EditorManager.getFocusedEditor();
+		var allMarks  = editor._codeMirror.getAllMarks();
 		var lineStats = editor._codeMirror.lineInfo(lineStart);
-		console.log(lineStats.widgets);
-		/*var $lineNumberBoxForError = $("<div class='cc-JSLint-error-in-line CodeMirror-linenumber'/>");
-		var $errorMarkerInLineGutter = $("<span/>");
-		$errorMarkerInLineGutter.addClass("cc-JSLint-warning");
-		$lineNumberBoxForError.append($errorMarkerInLineGutter);
-		$errorMarkerInLineGutter.addClass("cc-JSLint-one-error");
-		$lineNumberBoxForError.attr("title", 0);
-		$errorMarkerInLineGutter.text("!");
-		console.log(editor._codeMirror.setGutterMarker(lineStart, "CodeMirror-linenumbers", $lineNumberBoxForError[0]));
-		//console.log(editor._codeMirror);*/
+
 		if(!lineStats.widgets && widgetsErrors.length === 0){
-			// create a node
+			//Creating a node
 			var htmlNode =document.createElement("p");
 			var text = document.createTextNode(errorText);
 			htmlNode.appendChild(text);
+
 			var errrorWidget = editor._codeMirror.addLineWidget(lineStart, htmlNode,
 				{coverGutter: false, noHScroll: false, above: false, showIfHidden: false});
 			
 			widgetsErrors.push(errrorWidget);
-			
-			console.log(errrorWidget);
 		}
 	}
+
+	//Function that removes the line widget (errors)
 	function removeWidget(){
-		// remove displayed error messages
+		//Remove displayed error messages
 		widgetsErrors.forEach(function (lineWidget, lineIndex, array) {
 			if (lineWidget) {
 				lineWidget.clear();
@@ -82,7 +64,8 @@ define(function (require, exports, module) {
 		});
 		widgetsErrors = [];
 	}
-	//Function that adds a button on the gutter next to the line numbers
+
+	//Function that adds a button on the gutter (on given line nubmer) next to the line numbers
 	function showGutter(lineStart){
 		if(gutters.length === 0){
 			var editor = EditorManager.getFocusedEditor();
@@ -99,11 +82,12 @@ define(function (require, exports, module) {
 			editor._codeMirror.setOption("gutters", foundGutters);
 		}
 	}
+
 	//Function that removes gutter button
 	function removeGutter(){
 		var editor = EditorManager.getFocusedEditor();
 		gutters = [];
-		editor._codeMirror.clearGutter("CodeMirror-linenumbers");
+		editor._codeMirror.clearGutter("errorButton");
 	}
 	
 	exports.markErrors = markErrors;
