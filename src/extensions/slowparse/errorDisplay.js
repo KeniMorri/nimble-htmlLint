@@ -1,15 +1,16 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, brackets, less, $, document */
+/*global define, brackets, $, document, Mustache*/
 
 define(function (require, exports, module) {
 	"use strict";
 	
-	var EditorManager = brackets.getModule("editor/EditorManager"),
+	var EditorManager  = brackets.getModule("editor/EditorManager"),
 		ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
-		widgetsErrors = [],
-		gutters = [];
+		lineWidgetHTML = require("text!inlineWidget.html"),
+		widgetsErrors  = [],
+		gutters        = [];
+
 		ExtensionUtils.loadStyleSheet(module, "main.less");
-    var lineWidgetHTML = require("text!inlineWidget.html")
 	
 	//Function that highlights the line(s) with errors
 	function markErrors(lineStart, lineEnd, charStart, charEnd) {
@@ -39,18 +40,12 @@ define(function (require, exports, module) {
 	//is located and displays the error message.
 	function showWidget(errorText, lineStart){
 		var editor    = EditorManager.getFocusedEditor();
-		var allMarks  = editor._codeMirror.getAllMarks();
+		//var allMarks  = editor._codeMirror.getAllMarks();
 		var lineStats = editor._codeMirror.lineInfo(lineStart);
 
 		if(!lineStats.widgets && widgetsErrors.length === 0){
-            /* Depreciated
-			//Creating a node
-			var htmlNode =document.createElement("p");
-			var text = document.createTextNode(errorText);
-			htmlNode.appendChild(text);
-            */
             var htmlNode = document.createElement("div");
-            var text = Mustache.render(lineWidgetHTML, { 'error': errorText });
+            var text = Mustache.render(lineWidgetHTML, { "error": errorText });
             htmlNode.innerHTML = text;
 
         
@@ -64,7 +59,7 @@ define(function (require, exports, module) {
 	//Function that removes the line widget (errors)
 	function removeWidget(){
 		//Remove displayed error messages
-		widgetsErrors.forEach(function (lineWidget, lineIndex, array) {
+		widgetsErrors.forEach(function (lineWidget) {
 			if (lineWidget) {
 				lineWidget.clear();
 			}
