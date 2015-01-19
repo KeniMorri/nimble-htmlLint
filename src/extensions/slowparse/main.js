@@ -65,6 +65,7 @@ define(function (require, exports, module) {
     var keyEventHandler = function ($event, editor, event) {
         if (event.type === "keyup") {
             main();
+
         }
     };
 
@@ -98,7 +99,6 @@ define(function (require, exports, module) {
     function run_checker() {
         main();
     }
-
     // First, register a command - a UI-less object associating an id to a handler
     var MY_COMMAND_ID = "Show_Slowparse_Panel"; // package-style naming to avoid collisions
     CommandManager.register("Show_Slowparse_Panel", MY_COMMAND_ID, showpan);
@@ -110,7 +110,7 @@ define(function (require, exports, module) {
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
-    menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-U");
+    menu.addMenuItem(MY_COMMAND_ID,  "Ctrl-Alt-U");
     menu.addMenuItem(MY_COMMAND_ID2, "Ctrl-Alt-Y");
     menu.addMenuItem(MY_COMMAND_ID3, "Ctrl-Alt-T");
     

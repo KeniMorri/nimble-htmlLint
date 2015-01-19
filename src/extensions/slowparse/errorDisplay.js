@@ -9,6 +9,7 @@ define(function (require, exports, module) {
 		widgetsErrors = [],
 		gutters = [];
 		ExtensionUtils.loadStyleSheet(module, "main.less");
+    var lineWidgetHTML = require("text!inlineWidget.html")
 	
 	//Function that highlights the line(s) with errors
 	function markErrors(lineStart, lineEnd, charStart, charEnd) {
@@ -42,11 +43,17 @@ define(function (require, exports, module) {
 		var lineStats = editor._codeMirror.lineInfo(lineStart);
 
 		if(!lineStats.widgets && widgetsErrors.length === 0){
+            /* Depreciated
 			//Creating a node
 			var htmlNode =document.createElement("p");
 			var text = document.createTextNode(errorText);
 			htmlNode.appendChild(text);
+            */
+            var htmlNode = document.createElement("div");
+            var text = Mustache.render(lineWidgetHTML, { 'error': errorText });
+            htmlNode.innerHTML = text;
 
+        
 			var errrorWidget = editor._codeMirror.addLineWidget(lineStart, htmlNode,
 				{coverGutter: false, noHScroll: false, above: false, showIfHidden: false});
 			
