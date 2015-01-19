@@ -24,7 +24,6 @@ define(function (require, exports, module) {
             {line: lineEnd, ch: charEnd}, {className: "underline"});
          }
 
-       
         //console.log("Finished markErrors");
     }
 
