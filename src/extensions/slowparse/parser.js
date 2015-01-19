@@ -57,8 +57,7 @@ define(function(require){
                 "UNBOUND_ATTRIBUTE_VALUE": "<p>The attribute value <code>{{ error }}</code> appears to be detached from an attribute. You may be missing an '=' sign.</p>",
                 "UNTERMINATED_OPEN_TAG": "<p>The opening <code>&lt;{{ error }}&gt;</code> tag doesn't end with a <code>&gt;</code>.</p>"
             };
-            
-            //human-readable msg, start, and end of error based on error type
+        
             if (obj.type === "ATTRIBUTE_IN_CLOSING_TAG"){
                 msg[0] = Mustache.render(errorJSON.ATTRIBUTE_IN_CLOSING_TAG, { 'error': obj.closeTag.name });
                 msg[1] = obj.closeTag.start;
@@ -259,7 +258,6 @@ define(function(require){
                 parsedText += input[i];
                 charCount++;
             }
-            //character relative to start of the line
             msg[1] = msg[1] - lineBeginStart
             msg[2] = msg[2] - lineBeginEnd;
             
