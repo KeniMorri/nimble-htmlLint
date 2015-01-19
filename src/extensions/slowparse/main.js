@@ -1,14 +1,14 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, brackets, less, $, document */
+/*global define, brackets, $*/
 
 define(function (require, exports, module) {
     "use strict";
 
     var CommandManager      = brackets.getModule("command/CommandManager"),
         Menus               = brackets.getModule("command/Menus"),
-        AppInit             = brackets.getModule('utils/AppInit'),
+        AppInit             = brackets.getModule("utils/AppInit"),
         EditorManager       = brackets.getModule("editor/EditorManager"),
-        BottomDisplay       = require('BottomDisplayPanal'),
+        BottomDisplay       = require("BottomDisplayPanal"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser"),
         results             = [],
@@ -19,7 +19,7 @@ define(function (require, exports, module) {
     function main(){
         var editor = EditorManager.getFocusedEditor();
 
-        if(editor && editor.document.getLanguage()._name === 'HTML'){
+        if(editor && editor.document.getLanguage()._name === "HTML"){
             var text   = editor.document.getText();
             var result = parser(text);
             
@@ -37,7 +37,6 @@ define(function (require, exports, module) {
             BottomDisplayVar.update(text);
             //BottomDisplayVar.update(result[0]);
         }
-        return result;
     }
 
     //Function that clears all errors
@@ -46,9 +45,9 @@ define(function (require, exports, module) {
         MarkErrors.removeGutter();
         MarkErrors.removeWidget();
         results = [];
-    }
+    };
 
-    var toggleErrors = function(editor, line, gutter, event){
+    var toggleErrors = function(editor, line){
         if(results.length > 0 && !showingErrors && line === results[0][3] - 1){
             results.forEach(function (result) {
                 MarkErrors.showWidget(result[0], result[3] - 1);
@@ -60,28 +59,27 @@ define(function (require, exports, module) {
         }else{
             main();
         }
-    }
+    };
 
-    //Keyboard event handler
-    var keyEventHandler = function ($event, editor, event) {
-        if (event.type === "keyup") {
+    //Document changed event handler
+    var documentChanged = function (editor, object) {
+        if(editor){
+            console.log("In documentChanged!");
             main();
-
         }
     };
 
 
     //Switching editors
     var activeEditorChangeHandler = function ($event, focusedEditor, lostEditor) {
-        var editor = EditorManager.getFocusedEditor();
         if (lostEditor) {
-            $(lostEditor).off("keyup", keyEventHandler);
             lostEditor._codeMirror.off("gutterClick", toggleErrors);
+            lostEditor._codeMirror.off("change", documentChanged);
         }
 
         if (focusedEditor) {
-            $(focusedEditor).on("keyup", keyEventHandler);
             focusedEditor._codeMirror.on("gutterClick", toggleErrors);
+            focusedEditor._codeMirror.on("change", documentChanged);
         }
 
     };
@@ -101,7 +99,6 @@ define(function (require, exports, module) {
     
     AppInit.appReady(function(){
         BottomDisplayVar = new BottomDisplay();
-        var currentEditor = EditorManager.getCurrentFullEditor();
-        $(EditorManager).on('activeEditorChange', activeEditorChangeHandler);
+        $(EditorManager).on("activeEditorChange", activeEditorChangeHandler);
     });
 });
