@@ -34,7 +34,8 @@ define(function (require, exports, module) {
             }else{
                 clearAllErrors();
             }
-            BottomDisplayVar.update(result[0]);
+            BottomDisplayVar.update(text);
+            //BottomDisplayVar.update(result[0]);
         }
         return result;
     }
@@ -89,30 +90,21 @@ define(function (require, exports, module) {
     function showpan() {
         BottomDisplayVar.panelRender(true);
     }
-    
     //Function that hides panel
     function hidepan() {
         BottomDisplayVar.panelRender(false);
     }
-    
-    //Function that runs the main function
-    function run_checker() {
-        main();
-    }
     // First, register a command - a UI-less object associating an id to a handler
     var MY_COMMAND_ID = "Show_Slowparse_Panel"; // package-style naming to avoid collisions
-    CommandManager.register("Show_Slowparse_Panel", MY_COMMAND_ID, showpan);
+    CommandManager.register("Show Parsed HTML Panel", MY_COMMAND_ID, showpan);
     var MY_COMMAND_ID2 = "Hide_SlowParse_Panel";
-    CommandManager.register("Hide_Slowparse_Panel", MY_COMMAND_ID2, hidepan); 
-    var MY_COMMAND_ID3 = "Run_Checker";
-    CommandManager.register("Run_Checker", MY_COMMAND_ID3, main);
+    CommandManager.register("Hide Parsed HTML Panel", MY_COMMAND_ID2, hidepan); 
 
     // Then create a menu item bound to the command
     // The label of the menu item is the name we gave the command (see above)
     var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     menu.addMenuItem(MY_COMMAND_ID,  "Ctrl-Alt-U");
     menu.addMenuItem(MY_COMMAND_ID2, "Ctrl-Alt-Y");
-    menu.addMenuItem(MY_COMMAND_ID3, "Ctrl-Alt-T");
     
     AppInit.appReady(function(){
         BottomDisplayVar = new BottomDisplay();
