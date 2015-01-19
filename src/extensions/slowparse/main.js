@@ -69,15 +69,22 @@ define(function (require, exports, module) {
         results = [];
     }
 
-    var toggleErrors = function(){
-        if(results.length > 0 && !showingErrors){
+    var toggleErrors = function(editor, line, gutter, event){
+        if(line === 2){
+            console.log("Clicked on line 3");
+        }
+
+        //console.log(results[0][3] - 1);
+        //console.log(line);
+
+        if(results.length > 0 && !showingErrors && line === results[0][3] - 1){
             results.forEach(function (result) {
                 //MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
                 MarkErrors.showWidget(result[0], result[3] - 1);
                 console.log("Showing Errors");
                 showingErrors = true;     
             });
-        }else if(showingErrors){
+        }else if(results.length > 0 && showingErrors && line === results[0][3] - 1){
             MarkErrors.removeWidget();
             //MarkErrors.clearErrors();
             showingErrors = false;
@@ -111,7 +118,7 @@ define(function (require, exports, module) {
         if (focusedEditor) {
             $(focusedEditor).on("keyup", keyEventHandler);
 
-            console.log("focused editor exists!");
+            //console.log("focused editor exists!");
 
             focusedEditor._codeMirror.on("gutterClick", toggleErrors);
         }
