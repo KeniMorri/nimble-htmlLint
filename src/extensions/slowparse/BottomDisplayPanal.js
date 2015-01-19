@@ -12,7 +12,7 @@ define(function (require) {
         var that = this;
         WorkspaceManager.createBottomPanel('Bottom.panel', $(BottomHTML));
         this._panel = $('#bottom-panel-gui');
-        this._panel.on('click', 'close', function () { that.panelRender(false); });
+        this._panel.on('click', '.close', function () { that.panelRender(false); });
         //Resizer.show(this._panel);
     }
     BottomDisplay.prototype.panelRender = function (isVisible)
