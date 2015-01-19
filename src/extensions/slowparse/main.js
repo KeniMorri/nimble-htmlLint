@@ -1,3 +1,6 @@
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
+/*global define, brackets, less, $, document */
+
 define(function (require, exports, module) {
     "use strict";
 
@@ -5,54 +8,30 @@ define(function (require, exports, module) {
         Menus               = brackets.getModule("command/Menus"),
         AppInit             = brackets.getModule('utils/AppInit'),
         EditorManager       = brackets.getModule("editor/EditorManager"),
-        WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
-        DocumentManager     = brackets.getModule("document/DocumentManager"),
-        Document            = brackets.getModule("document/Document"),
+        BottomDisplay       = require('BottomDisplayPanal'),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser"),
         results             = [],
         showingErrors       = false,
-        lastErrorIndex      = -1;   
+        lastErrorIndex      = -1,
+        BottomDisplayVar;   
     
-    var BottomDisplay = require('BottomDisplayPanal'),
-        BottomDisplayVar;
-
     function main(){
         var editor = EditorManager.getFocusedEditor();
 
-        //console.log(editor.document.getLanguage()._name);
         if(editor && editor.document.getLanguage()._name === 'HTML'){
             var text   = editor.document.getText();
             var result = parser(text);
             
             if(result.length > 0){
                 results.push(result);
-                console.log("Error found at: " + (result[3] - 1));
-                console.log("Last Error Index: " + lastErrorIndex);
                 if(lastErrorIndex !== -1 && lastErrorIndex !== (result[3] - 1)){
-                    /*MarkErrors.clearErrors();
-                    MarkErrors.removeGutter();
-                    MarkErrors.removeWidget();
-                    results = [];*/
                     clearAllErrors();
                 }
                 MarkErrors.showGutter(result[3] - 1);
                 MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
-                //console.log($(EditorManager).on("gutterClick", toggleErrors(result)));
                 lastErrorIndex = (result[3] - 1);
-                console.log("Error Found");
-                //console.log("Start of Error Line : " + result[3] + " Character : " + result[1] + " End of Error Line : " + result[4] + " Character : " + result[2]);
-                //console.log("The strings between are:\n" + result[5]);
-                //MarkErrors.showWidget(result[0], result[3] - 1);
-                
-
             }else{
-                /*MarkErrors.clearErrors();
-                MarkErrors.removeGutter();
-                MarkErrors.removeWidget();
-                //console.log($(EditorManager).off("gutterClick", toggleErrors(result)));
-                console.log("No Errors Found");
-                results = [];*/
                 clearAllErrors();
             }
             BottomDisplayVar.update(result[0]);
@@ -60,46 +39,31 @@ define(function (require, exports, module) {
         return result;
     }
 
+    //Function that clears all errors
     var clearAllErrors = function(){
         MarkErrors.clearErrors();
         MarkErrors.removeGutter();
         MarkErrors.removeWidget();
-        //console.log($(EditorManager).off("gutterClick", toggleErrors(result)));
-        console.log("No Errors Found");
         results = [];
     }
 
     var toggleErrors = function(editor, line, gutter, event){
-        if(line === 2){
-            console.log("Clicked on line 3");
-        }
-
-        //console.log(results[0][3] - 1);
-        //console.log(line);
-
         if(results.length > 0 && !showingErrors && line === results[0][3] - 1){
             results.forEach(function (result) {
-                //MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
                 MarkErrors.showWidget(result[0], result[3] - 1);
-                console.log("Showing Errors");
                 showingErrors = true;     
             });
         }else if(results.length > 0 && showingErrors && line === results[0][3] - 1){
             MarkErrors.removeWidget();
-            //MarkErrors.clearErrors();
             showingErrors = false;
-            console.log("Not Showing Errors");
         }else{
             main();
         }
-        console.log("In toggleErrors");
-
     }
 
     //Keyboard event handler
     var keyEventHandler = function ($event, editor, event) {
         if (event.type === "keyup") {
-            //console.log("Key pressed!");
             main();
 
         }
@@ -116,27 +80,23 @@ define(function (require, exports, module) {
 
         if (focusedEditor) {
             $(focusedEditor).on("keyup", keyEventHandler);
-
-            //console.log("focused editor exists!");
-
             focusedEditor._codeMirror.on("gutterClick", toggleErrors);
         }
 
     };
     
+    //Function that shows panel
     function showpan() {
-        console.log("Showing Panel");
         BottomDisplayVar.panelRender(true);
     }
     
+    //Function that hides panel
     function hidepan() {
-        console.log("Hiding Panel");
         BottomDisplayVar.panelRender(false);
     }
     
+    //Function that runs the main function
     function run_checker() {
-        console.log("Run checker");
-        //BottomDisplayVar.update("Hello this is the temp error while I make this work");
         main();
     }
     // First, register a command - a UI-less object associating an id to a handler
