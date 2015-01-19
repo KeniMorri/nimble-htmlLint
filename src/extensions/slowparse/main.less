@@ -1,6 +1,22 @@
+.errorHighlight{
+	background-color: #EFAFAF;
+}
 
-.CodeMirror-linenumber .cc-JSLint-error-in-line {
+.errorButton{
+	margin: 1px;
+	background-color: #FF0000;
+}
 
+.errorText{
+    padding-left: 3px;
+    padding-right: 3px;
+    font-weight: bold;
+    color: #FFFFFF;
+    border-radius: 100%;
+}
+
+/*
+.CodeMirror-linenumber.cc-JSLint-error-in-line {
     color: black;
 }
 
@@ -19,16 +35,16 @@
     }
     
     .cc-JSLint-one-error {
-
         background-color: rgb(231, 79, 96);
     }
 }
+
 
 .CodeMirror-gutter-elt, .CodeMirror-linewidget {
 
     .cc-JSLint-stopping-error {
         background-color: rgb(115, 40, 48);
-        //padding-right: 4pt;
+        padding-right: 4pt;
         //padding-left: 4pt;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
@@ -40,7 +56,6 @@
     
     .cc-JSLint-warning {
         background-color: rgb(224, 224, 2);
-
     }
     
     .cc-JSLint-bad-code-error {
@@ -145,9 +160,7 @@
     }
     
     .cc-JSLint-error-highlight {
-        border-bottom-style: dotted;
-        border-bottom-width: 2pt;
-        border-bottom-color: red;
+        background-color: #EFAFAF;
     }
     
     .cc-JSLint-just-style-warning {
@@ -191,5 +204,7 @@
 
 // make the CodeMirror-gutter wider to accomodate the error marker
 .cm-s-default div.CodeMirror-gutter {
-    min-width: 5.0em;
+    //min-width: 5.0em;
+    width: 200px;
 }
+*/
