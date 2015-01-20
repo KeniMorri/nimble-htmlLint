@@ -44,6 +44,7 @@ define(function (require, exports, module) {
 
 		if(!lineStats.widgets && widgetsErrors.length === 0){
             var htmlNode = document.createElement("div");
+            htmlNode.className = "errorPanel";
             var text = Mustache.render(lineWidgetHTML, { "error": errorText });
             htmlNode.innerHTML = text;
 
