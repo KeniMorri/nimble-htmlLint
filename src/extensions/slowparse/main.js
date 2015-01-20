@@ -24,18 +24,17 @@ define(function (require, exports, module) {
             var result = parser(text);
             
             if(result.length > 0){
-                results.push(result);
                 if(lastErrorIndex !== -1 && lastErrorIndex !== (result[3] - 1)){
                     clearAllErrors();
                 }
-                MarkErrors.showGutter(result[3] - 1);
-                MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
-                lastErrorIndex = (result[3] - 1);
+                    MarkErrors.showGutter(result[3] - 1);
+                    MarkErrors.markErrors(result[3] - 1, result[4] - 1, result[1], result[2]);
+                    lastErrorIndex = (result[3] - 1);
+                    results.push(result);
             }else{
                 clearAllErrors();
             }
             BottomDisplayVar.update(text);
-            //BottomDisplayVar.update(result[0]);
         }
     }
 
@@ -45,6 +44,7 @@ define(function (require, exports, module) {
         MarkErrors.removeGutter();
         MarkErrors.removeWidget();
         results = [];
+        lastErrorIndex = -1;
     };
 
     var toggleErrors = function(editor, line){
@@ -64,11 +64,9 @@ define(function (require, exports, module) {
     //Document changed event handler
     var documentChanged = function (editor, object) {
         if(editor){
-            console.log("In documentChanged!");
             main();
         }
     };
-
 
     //Switching editors
     var activeEditorChangeHandler = function ($event, focusedEditor, lostEditor) {
