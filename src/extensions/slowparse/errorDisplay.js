@@ -17,11 +17,17 @@ define(function (require, exports, module) {
 		var editor   = EditorManager.getFocusedEditor();
 		var allMarks = editor._codeMirror.getAllMarks();
 
-		if(!allMarks.length){
-			editor._codeMirror.markText({line: lineStart, ch: charStart},
-				{line: lineEnd, ch: charEnd},
-				{ className: "errorHighlight"});
-		}
+		//if(!allMarks.length){
+			editor._codeMirror.markText({
+				line: lineStart, 
+				ch: charStart
+			},{
+				line: lineEnd, 
+				ch: charEnd
+			},{ 
+				className: "errorHighlight"
+			});
+		//}
 	}
 	
 	//Function that clears all the highlighted lines
