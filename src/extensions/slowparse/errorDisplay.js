@@ -39,8 +39,7 @@ define(function (require, exports, module) {
 	//Function that creates a widget under the line where the error
 	//is located and displays the error message.
 	function showWidget(errorText, lineStart){
-		var editor    = EditorManager.getFocusedEditor();
-		//var allMarks  = editor._codeMirror.getAllMarks();
+		var editor    = EditorManager.getActiveEditor();
 		var lineStats = editor._codeMirror.lineInfo(lineStart);
 
 		if(!lineStats.widgets && widgetsErrors.length === 0){
