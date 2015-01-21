@@ -11,6 +11,7 @@ define(function (require, exports, module) {
 		gutters        = [];
 
 		ExtensionUtils.loadStyleSheet(module, "main.less");
+		require("tooltipsy.source");
 	
 	//Function that highlights the line(s) with errors
 	function markErrors(lineStart, lineEnd, charStart, charEnd) {
@@ -86,8 +87,10 @@ define(function (require, exports, module) {
 			$errorMarker.text("!");
 
 			gutters.push(editor._codeMirror.setGutterMarker(lineStart, "errorButton", $errorDiv[0]));
-
+			
 			editor._codeMirror.setOption("gutters", foundGutters);
+			//Show tooltips message
+			$(".CodeMirror-linenumbers").tooltipsy({content : "Click button for information"}); 
 		}
 	}
 
@@ -96,6 +99,8 @@ define(function (require, exports, module) {
 		var editor = EditorManager.getFocusedEditor();
 		gutters = [];
 		editor._codeMirror.clearGutter("errorButton");
+		//Destroy tooltips instance
+		$(".CodeMirror-linenumbers").data("tooltipsy").destroy();
 	}
 	
 	exports.markErrors = markErrors;

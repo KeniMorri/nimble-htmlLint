@@ -8,13 +8,16 @@ define(function (require, exports, module) {
         Menus               = brackets.getModule("command/Menus"),
         AppInit             = brackets.getModule("utils/AppInit"),
         EditorManager       = brackets.getModule("editor/EditorManager"),
+        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         BottomDisplay       = require("BottomDisplayPanal"),
         MarkErrors          = require("errorDisplay"),
         parser              = require("parser"),
         results             = [],
         showingErrors       = false,
         lastErrorIndex      = -1,
-        BottomDisplayVar;   
+        BottomDisplayVar;
+
+        ExtensionUtils.loadStyleSheet(module, "main.less");   
     
     function main(){
         var editor = EditorManager.getFocusedEditor();
@@ -77,7 +80,7 @@ define(function (require, exports, module) {
 
         if (focusedEditor) {
             focusedEditor._codeMirror.on("gutterClick", toggleErrors);
-            focusedEditor._codeMirror.on("change", documentChanged);
+            focusedEditor._codeMirror.on("change", documentChanged);           
         }
 
     };
