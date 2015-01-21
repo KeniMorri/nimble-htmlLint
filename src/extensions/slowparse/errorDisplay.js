@@ -18,17 +18,11 @@ define(function (require, exports, module) {
 		var editor   = EditorManager.getFocusedEditor();
 		var allMarks = editor._codeMirror.getAllMarks();
 
-		//if(!allMarks.length){
-			editor._codeMirror.markText({
-				line: lineStart, 
-				ch: charStart
-			},{
-				line: lineEnd, 
-				ch: charEnd
-			},{ 
-				className: "errorHighlight"
-			});
-		//}
+		if(!allMarks.length){
+			editor._codeMirror.markText({line: lineStart, ch: charStart},
+				{line: lineEnd, ch: charEnd},
+				{className: "errorHighlight"});
+		}
 	}
 	
 	//Function that clears all the highlighted lines
@@ -87,10 +81,12 @@ define(function (require, exports, module) {
 			$errorMarker.text("!");
 
 			gutters.push(editor._codeMirror.setGutterMarker(lineStart, "errorButton", $errorDiv[0]));
-			
+
 			editor._codeMirror.setOption("gutters", foundGutters);
 			//Show tooltips message
 			$(".CodeMirror-linenumbers").tooltipsy({content : "Click button for information"}); 
+
+			$(".CodeMirror-gutter").addClass("gutterCursor");
 		}
 	}
 
@@ -101,6 +97,8 @@ define(function (require, exports, module) {
 		editor._codeMirror.clearGutter("errorButton");
 		//Destroy tooltips instance
 		$(".CodeMirror-linenumbers").data("tooltipsy").destroy();
+		//Changes cursor back to default
+		$(".CodeMirror-gutter").removeClass("gutterCursor");
 	}
 	
 	exports.markErrors = markErrors;
